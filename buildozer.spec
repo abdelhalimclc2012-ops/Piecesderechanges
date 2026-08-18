@@ -8,8 +8,8 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,kv,atlas
 
 version = 1.0
-requirements = python3,kivy==2.3.0,fpdf2
 
+requirements = python3==3.11.6,kivy==2.3.0,fpdf2
 orientation = portrait
 fullscreen = 0
 
