@@ -1,27 +1,47 @@
 [app]
 
+# (str) Titre de votre application
 title = Pieces & Consommables
+
+# (str) Nom du paquet (sans espaces ni caractères spéciaux)
 package.name = piecesconsommables
-package.domain = org.delice
 
+# (str) Domaine du paquet (inversé pour l'unicité sur Android)
+package.domain = org.maintenance
+
+# (list) Fichiers source à inclure (code python, images, etc.)
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas
+source.include_exts = py,png,jpg,kv,atlas
 
+# (list) Application requirements
+# Inclut python3, kivy, sqlite3 (intégré nativement), fpdf2 pour les PDF et android pour la gestion des permissions runtime.
+requirements = python3,kivy,fpdf2,android
+
+# (str) Version de l'application
 version = 1.0
-requirements = python3==3.11.6,hostpython3==3.11.6,kivy==2.3.0,pillow==9.5.0,fpdf2==2.7.9
-orientation = portrait 
+
+# (list) Orientations supportées
+orientation = portrait
+
+# (bool) Indique si l'application doit être en plein écran
 fullscreen = 0
 
-# Decommente et ajoute icon.png (512x512) a la racine du projet si tu veux une icone perso
-# icon.filename = %(source.dir)s/icon.png
+# (list) Permissions Android nécessaires pour accéder aux dossiers partagés (Téléchargements / Images)
+android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE
 
-android.permissions = WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE
-android.api = 33
+# (str) API Android minimale cible
 android.minapi = 21
-android.ndk = 25b
+
+# (str) API Android SDK cible
+android.sdk = 33
+
+# (str) Architecture cible (armeabi-v7a et/ou arm64-v8a)
 android.archs = arm64-v8a, armeabi-v7a
-android.accept_sdk_license = True
 
 [buildozer]
+
+# (int) Niveau de log (0 = erreurs uniquement, 1 = infos, 2 = debug)
 log_level = 2
+
+# (int) Afficher un avertissement si buildozer est exécuté en root (0 = Non, 1 = Oui)
 warn_on_root = 1
