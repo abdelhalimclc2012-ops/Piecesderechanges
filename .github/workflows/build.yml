@@ -1,4 +1,4 @@
-name: CI Buildozer APK
+name: Build Android APK
 
 on:
   push:
@@ -14,14 +14,13 @@ jobs:
       - name: Récupération du code source
         uses: actions/checkout@v4
 
-      - name: Compilation de l'APK Android avec Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Compilation avec le conteneur officiel Buildozer
+        uses: kivy/buildozer-action@master
         with:
           command: android.debug
 
-      - name: Télécharger l'artefact APK généré
+      - name: Récupération et sauvegarde de l'APK
         uses: actions/upload-artifact@v4
         with:
-          name: package-apk
+          name: application-apk
           path: bin/*.apk
