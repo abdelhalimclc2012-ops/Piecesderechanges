@@ -8,8 +8,8 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,kv,atlas
 
 version = 1.0
-requirements = python3==3.11.6,hostpython3==3.11.6,kivy==2.3.0,fpdf2
-orientation = portrait
+requirements = python3==3.11.6,hostpython3==3.11.6,kivy==2.3.0,pillow,fpdf2==2.7.9
+orientation = por
 fullscreen = 0
 
 # Decommente et ajoute icon.png (512x512) a la racine du projet si tu veux une icone perso
