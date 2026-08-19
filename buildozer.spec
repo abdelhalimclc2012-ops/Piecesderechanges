@@ -38,7 +38,7 @@ android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERN
 android.minapi = 21
 
 # (str) API Android SDK cible
-android.api = 33
+android.api = 31
 
 # (str) Version du NDK Android (pinnee pour la reproductibilite du build)
 android.ndk = 25b
