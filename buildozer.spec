@@ -10,7 +10,7 @@ version = 3.0
 requirements = python3,kivy==2.3.1,fpdf2,fonttools,Pillow,plyer,android
 orientation = portrait
 fullscreen = 0
-icon.filename = %(source.dir)s/icon.png
+#icon.filename = %(source.dir)s/icon.png
 
 # Permissions pour l'export CSV/PDF dans Download et le choix du logo
 android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,READ_MEDIA_IMAGES
