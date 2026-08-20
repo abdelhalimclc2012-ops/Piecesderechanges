@@ -1,0 +1,40 @@
+name: Build APK Pieces & Consommables
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Compiler l'APK avec l'image Docker officielle Kivy (avec réessais automatiques)
+        run: |
+          set +e
+          for i in 1 2 3; do
+            echo "=== Tentative $i/3 ==="
+            yes | docker run --rm -i \
+              -e PIP_NO_BINARY=fonttools \
+              --volume "${{ github.workspace }}":/home/user/hostcwd \
+              kivy/buildozer \
+              android debug
+            code=$?
+            if [ $code -eq 0 ]; then
+              echo "Build réussi à la tentative $i"
+              exit 0
+            fi
+            echo "Échec tentative $i (code $code), nouvelle tentative dans 30s..."
+            sleep 30
+          done
+          echo "Échec après 3 tentatives"
+          exit 1
+
+      - name: Publier l'APK comme artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pieces-consommables-apk
+          path: bin/*.apk
