@@ -1,8 +1,7 @@
 [app]
-title = Gestion Maintenance Delice
-package.name = maintenancedelice
-package.domain = org.delice
-source.dir = .
+package.name = piecesconsommables
+package.domain = com.hichri.pieces
+title = Pieces et Consommables
 source.main = main.py
 source.include_exts = py,png,jpg,jpeg,ttf,db
 version = 2.0
