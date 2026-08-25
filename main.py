@@ -298,6 +298,7 @@ COL_ACCENT = (0.29, 0.56, 0.60, 1)
 COL_ACCENT_TEXT = (0.05, 0.09, 0.10, 1)
 COL_RED = (0.90, 0.35, 0.32, 1)
 COL_BADGE_COUNT_BG = (0.20, 0.21, 0.26, 1)
+COL_BLUE_TITRE = (0.35, 0.55, 0.95, 1)
 
 Window.clearcolor = COL_BG
 APP_TITLE = "Pieces & Consommables"
@@ -470,7 +471,7 @@ class PiecesApp(App):
         ligne1 = BoxLayout(size_hint_y=None, height=dp(54), spacing=dp(10))
 
         titre_box = BoxLayout(orientation="vertical")
-        self.lbl_titre = Label(text=APP_TITLE, bold=True, font_size="18sp", color=COL_TEXT,
+        self.lbl_titre = Label(text=APP_TITLE, bold=True, font_size="18sp", color=COL_BLUE_TITRE,
                                halign="left", valign="middle")
         self.lbl_titre.bind(size=lambda w, *a: setattr(w, "text_size", w.size))
         titre_box.add_widget(self.lbl_titre)
@@ -930,10 +931,55 @@ class PiecesApp(App):
     # ------------------------------------------------------------------
     # Export
     # ------------------------------------------------------------------
+    def _show_export_popup(self, path, note=""):
+        """Popup persistante (contrairement au toast) montrant le chemin
+        complet du fichier exporte, pour qu'on puisse le retrouver."""
+        box = BoxLayout(orientation="vertical", spacing=dp(10), padding=dp(16))
+        rounded_bg(box, COL_CARD)
+        texte = f"Fichier enregistre :\n\n{path}"
+        if note:
+            texte += f"\n\n{note}"
+        lbl = Label(text=texte, color=COL_TEXT, halign="left", valign="top")
+        lbl.bind(size=lambda w, *a: setattr(w, "text_size", w.size))
+        box.add_widget(lbl)
+        popup = Popup(title="Export termine", content=box, size_hint=(0.9, 0.5),
+                      title_color=COL_TEXT, separator_color=COL_ACCENT,
+                      background_color=(0, 0, 0, 0.6))
+        btn = Button(text="OK", size_hint_y=None, height=dp(46),
+                    background_color=COL_ACCENT, color=COL_ACCENT_TEXT, bold=True,
+                    on_release=popup.dismiss)
+        box.add_widget(btn)
+        popup.open()
+
+    def _export_with_fallback(self, filename, writer_func):
+        """Essaie d'ecrire dans le dossier public (Download...). Si ca echoue
+        (ex: restriction scoped storage sur Android 10+), bascule
+        automatiquement sur le dossier prive de l'app, qui est toujours
+        accessible. Affiche ensuite une popup avec le chemin complet final,
+        pour qu'on sache toujours exactement ou le fichier a ete enregistre."""
+        primary_path = os.path.join(get_export_dir(), filename)
+        try:
+            writer_func(primary_path)
+            self._show_export_popup(primary_path)
+            return
+        except Exception:
+            pass
+
+        fallback_path = os.path.join(get_db_dir(), filename)
+        try:
+            writer_func(fallback_path)
+            self._show_export_popup(
+                fallback_path,
+                note="(dossier public indisponible sur cet appareil -> "
+                     "enregistre dans le dossier interne de l'app)")
+        except Exception as e:
+            toast(f"Erreur export: {e}")
+
     def export_csv(self):
         rows = list_all_pieces_with_equipement()
-        path = f"{get_export_dir()}/pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
-        try:
+        filename = f"pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
+
+        def write_csv(path):
             with open(path, "w", newline="", encoding="utf-8-sig") as f:
                 writer = csv.writer(f, delimiter=";")
                 writer.writerow(["Equipement", "Categorie eq.", "Nom piece", "Reference piece",
@@ -941,9 +987,8 @@ class PiecesApp(App):
                 for r in rows:
                     writer.writerow([r["equipement"], r["categorie"], r["designation"],
                                      r["reference_piece"], r["code_magasin"], r["date_maj"]])
-            toast(f"CSV exporte : {path.split('/')[-1]}")
-        except Exception as e:
-            toast(f"Erreur export CSV: {e}")
+
+        self._export_with_fallback(filename, write_csv)
 
     def export_pdf(self):
         try:
@@ -1012,12 +1057,8 @@ class PiecesApp(App):
                 draw_row(headers, bold=True)
             draw_row([r["equipement"], r["designation"], r["reference_piece"], r["code_magasin"]])
 
-        path = f"{get_export_dir()}/pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
-        try:
-            pdf.output(path)
-            toast(f"PDF exporte : {path.split('/')[-1]}")
-        except Exception as e:
-            toast(f"Erreur export PDF: {e}")
+        filename = f"pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+        self._export_with_fallback(filename, pdf.output)
 
 
 if __name__ == "__main__":
