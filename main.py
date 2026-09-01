@@ -574,6 +574,10 @@ class PiecesApp(App):
         footer.add_widget(b_pdf)
         self.root_layout.add_widget(footer)
 
+        credit = Label(text="Realise par Hichri Abdelhalim", font_size="15sp",
+                      color=COL_TEXT_DIM, size_hint_y=None, height=dp(30))
+        self.root_layout.add_widget(credit)
+
     def _on_search(self, inst, val):
         self.search_text = val.strip()
         if self.search_text:
@@ -774,14 +778,8 @@ class PiecesApp(App):
         def save(*a):
             nom = f_nom.text
             code_mag = f_code.text
-            ok = True
             if not nom:
                 f_nom.set_error("Le nom de la piece est obligatoire")
-                ok = False
-            if not code_mag:
-                f_code.set_error("Le code magasin est obligatoire")
-                ok = False
-            if not ok:
                 return
             save_piece(equipement_id, nom, f_ref.text, code_mag, p["id"] if p else None)
             popup.dismiss()
