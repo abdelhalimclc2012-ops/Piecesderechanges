@@ -975,7 +975,7 @@ class PiecesApp(App):
 
     def export_csv(self):
         rows = list_all_pieces_with_equipement()
-        filename = f"pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
+        filename = "pieces_equipements.csv"
 
         def write_csv(path):
             with open(path, "w", newline="", encoding="utf-8-sig") as f:
@@ -1055,7 +1055,7 @@ class PiecesApp(App):
                 draw_row(headers, bold=True)
             draw_row([r["equipement"], r["designation"], r["reference_piece"], r["code_magasin"]])
 
-        filename = f"pieces_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+        filename = "pieces_equipements.pdf"
         self._export_with_fallback(filename, pdf.output)
 
 
